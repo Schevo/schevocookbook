@@ -1,0 +1,51 @@
+=================
+ Schevo Cookbook
+=================
+
+--------------------------------------------
+ Recording entity create/update time stamps
+--------------------------------------------
+
+
+Recording creation time stamps
+==============================
+
+Code: `<schema/date_time_stamps_001.py>`__
+
+To record a time stamp for creation time of an entity, do the following:
+
+1. Add a ``created`` field of type ``datetime`` to the entity class. Make it
+``readonly=True`` and perhaps ``hidden=True`` so user interfaces don't show it
+as editable. (Line 12)
+
+2. Customize the ``Create`` transaction's ``_before_execute`` method. See
+`Schevo transaction method hooks </schevo/reference/transaction-hook-methods.txt>`__.
+(Lines 14-18)
+
+3. Set ``readonly=False`` on the ``created`` field so we can record the
+timestamp. (Line 17)
+
+4. Record the timestamp by importing ``datetime`` and using
+``datetime.datetime.now()``.  (Lines 5-6, 18)
+
+
+Recording update time stamps
+============================
+
+Code: `<schema/date_time_stamps_002.py>`__
+
+The steps are similar for recording a last-updated time stamp:
+
+1. Add an ``updated`` field of type ``datetime`` to the entity class. Make it
+``readonly=True`` and perhaps ``hidden=True``. Also make it
+``required=False``, as newly-created entities won't yet have an updated time
+stamp. (Line 13)
+
+2. Customize the ``Update`` transaction's ``_before_execute`` method. See
+`Schevo transaction method hooks </schevo/reference/transaction-hook-methods.txt>`__.
+(Lines 21-25)
+
+3. Set ``readonly=False`` on the ``updated`` field so we can record the
+timestamp. (Line 24)
+
+4. Record the timestamp by using ``datetime.datetime.now()``. (Line 25)
