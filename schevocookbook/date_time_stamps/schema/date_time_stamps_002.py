@@ -8,7 +8,7 @@ now = datetime.datetime.now
 
 class Thing(E.Entity):
 
-    name = f.unicode()
+    name = f.string()
     created = f.datetime(readonly=True)
     updated = f.datetime(readonly=True, required=False)
     
