@@ -10,7 +10,8 @@
 Recording creation time stamps
 ==============================
 
-Code: `<schema/date_time_stamps_001.py>`__
+Code: `<schema/date_time_stamps_001.py>`__ 
+      `(colorized) <schema/date_time_stamps_001.py-colorized>`__ 
 
 To record a time stamp for creation time of an entity, do the following:
 
@@ -32,7 +33,8 @@ To record a time stamp for creation time of an entity, do the following:
 Recording update time stamps
 ============================
 
-Code: `<schema/date_time_stamps_002.py>`__
+Code: `<schema/date_time_stamps_002.py>`__ 
+      `(colorized) <schema/date_time_stamps_002.py-colorized>`__ 
 
 The steps are similar for recording a last-updated time stamp:
 
