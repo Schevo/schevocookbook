@@ -29,6 +29,10 @@ To record a time stamp for creation time of an entity, do the following:
 4. Record the timestamp by importing ``datetime`` and using
    ``datetime.datetime.now()``.  (Lines 5-6, 18)
 
+.. sourcecode:: pydoc
+
+    
+
 
 Recording update time stamps
 ============================
