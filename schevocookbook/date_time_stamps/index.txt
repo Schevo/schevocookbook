@@ -29,6 +29,23 @@ To record a time stamp for creation time of an entity, do the following:
 4. Record the timestamp by importing ``datetime`` and using
    ``datetime.datetime.now()``.  (Lines 5-6, 18)
 
+Create a new `Thing`, and check to see that its date/time stamp is
+between a before and after timestamp:
+
+.. sourcecode:: pycon
+
+    >>> from schevo.test import DocTestEvolve
+    >>> import datetime; now = datetime.datetime.now
+
+    >>> before = now()
+    >>> t = DocTestEvolve('schevocookbook.date_time_stamps.schema', 1)
+    >>> thing = t.db.execute(
+    ...     t.db.Thing.t.create(name=u'Thing One')
+    ...     )
+    >>> after = now()
+    >>> before < thing.created < after
+    True
+
 
 Recording update time stamps
 ============================
@@ -52,3 +69,22 @@ The steps are similar for recording a last-updated time stamp:
 
 4. Record the timestamp by using ``datetime.datetime.now()``. (Line
    25)
+
+Create a new `Thing`, and check to see that its create and update
+date/time stamps line up with timestamps recorded and after those
+operations:
+
+.. sourcecode:: pycon
+
+    >>> before = now()
+    >>> t = DocTestEvolve('schevocookbook.date_time_stamps.schema', 2)
+    >>> thing = t.db.execute(t.db.Thing.t.create(
+    ...     name=u'Thing One',
+    ...     ))
+    >>> during = now()
+    >>> thing = t.db.execute(thing.t.update(
+    ...     name=u'Thing 1',
+    ...     ))
+    >>> after = now()
+    >>> before < thing.created < during < thing.updated < after
+    True
