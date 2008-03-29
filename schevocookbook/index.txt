@@ -6,3 +6,8 @@
 
   - `Recording entity create/update time stamps
     <date_time_stamps/>`__
+
+- Queues
+
+  - `Managing multiple queues
+    <multiple_queues/>`__

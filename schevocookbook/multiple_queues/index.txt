@@ -1,0 +1,121 @@
+=================
+ Schevo Cookbook
+=================
+
+--------------------------
+ Managing multiple queues
+--------------------------
+
+
+Simple queues allowing pushing, popping, and sequential traversal
+=================================================================
+
+Code: `<schema/multiple_queues_001.py>`__
+`(colorized) <schema/multiple_queues_001.py-colorized>`__
+
+In this recipe, we discuss a simple queue structure that exhibits the
+following traits:
+
+- Items can be pushed onto a queue.
+
+- Items can be popped from a queue.
+
+- Queues can be traversed sequentially.
+
+- An item can be in more than one queue.
+
+- An item can only appear once in a given queue.
+
+Use version 1 of this recipe's schema:
+
+.. sourcecode:: pycon
+
+    >>> from schevo.test import DocTestEvolve
+    >>> t = DocTestEvolve('schevocookbook.multiple_queues.schema', 1)
+
+For convenience, use the `by` method of the `Item` and `Queue` extents
+to populate local variables from sample data:
+
+    >>> i1, i2, i3, i4, i5, i6 = t.db.Item.by('number')
+    >>> q1, q2 = t.db.Queue.by('name')
+
+Initially, each queue is empty:
+
+    >>> q1.size
+    0
+    >>> q2.size
+    0
+
+Push items `i1`, `i2`, and `i3` onto queue `q1` as separate
+transactions:
+
+    >>> print t.db.execute(q1.t.push(item=i1))
+    A :: 1
+    >>> print t.db.execute(q1.t.push(item=i2))
+    A :: 2
+    >>> print t.db.execute(q1.t.push(item=i3))
+    A :: 3
+
+Push items `i2`, `i3`, and `i4` onto queue `q2` as an atomic
+transaction:
+
+    >>> from schevo.transaction import Combination
+    >>> transactions = [
+    ...     q2.t.push(item=i2),
+    ...     q2.t.push(item=i3),
+    ...     q2.t.push(item=i4),
+    ...     ]
+    >>> results = t.db.execute(Combination(transactions))
+    >>> for r in results:
+    ...     print r
+    B :: 2
+    B :: 3
+    B :: 4
+
+Each queue now has three members:
+
+    >>> q1.size
+    3
+    >>> q2.size
+    3
+
+Non-destructively inspect the queue in bidirectional order from either
+end:
+
+    >>> q1.head.item.number
+    1
+    >>> q1.head.next.item.number
+    2
+    >>> q1.head.next.next.item.number
+    3
+    >>> q1.head.next.next.next
+    UNASSIGNED
+    >>> q1.head.next.next.previous.item.number
+    2
+
+    >>> q1.tail.item.number
+    3
+    >>> q1.tail.previous.item.number
+    2
+
+Destructively pop the first item available at the head of each queue:
+
+    >>> item = t.db.execute(q1.t.pop())
+    >>> item == i1
+    True
+    >>> q1.size
+    2
+    >>> q1.head.item.number
+    2
+
+    >>> item = t.db.execute(q2.t.pop())
+    >>> item == i2
+    True
+    >>> q2.size
+    2
+    >>> q2.head.item.number
+    3
+
+.. sourcecode:: pycon
+
+    >>> t.done()

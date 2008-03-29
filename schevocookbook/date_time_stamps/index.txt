@@ -39,9 +39,9 @@ between a before and after timestamp:
 
     >>> before = now()
     >>> t = DocTestEvolve('schevocookbook.date_time_stamps.schema', 1)
-    >>> thing = t.db.execute(
-    ...     t.db.Thing.t.create(name=u'Thing One')
-    ...     )
+    >>> thing = t.db.execute(t.db.Thing.t.create(
+    ...     name = u'Thing One',
+    ...     ))
     >>> after = now()
     >>> before < thing.created < after
     True
@@ -79,11 +79,11 @@ operations:
     >>> before = now()
     >>> t = DocTestEvolve('schevocookbook.date_time_stamps.schema', 2)
     >>> thing = t.db.execute(t.db.Thing.t.create(
-    ...     name=u'Thing One',
+    ...     name = u'Thing One',
     ...     ))
     >>> during = now()
     >>> thing = t.db.execute(thing.t.update(
-    ...     name=u'Thing 1',
+    ...     name = u'Thing 1',
     ...     ))
     >>> after = now()
     >>> before < thing.created < during < thing.updated < after
