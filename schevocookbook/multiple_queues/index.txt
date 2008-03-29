@@ -34,12 +34,21 @@ Use version 1 of this recipe's schema:
     >>> t = DocTestEvolve('schevocookbook.multiple_queues.schema', 1)
 
 For convenience, use the `by` method of the `Item` and `Queue` extents
-to populate local variables from sample data:
+to populate local variables from sample data.  This works because of
+the keys specified for those extents (lines 9, 30).  Keys act as
+unique indices.
+
+.. sourcecode:: pycon
 
     >>> i1, i2, i3, i4, i5, i6 = t.db.Item.by('number')
     >>> q1, q2 = t.db.Queue.by('name')
 
-Initially, each queue is empty:
+Initially, each queue is empty.  The `size` field is a calculated
+field (lines 26-28).  That is, the size is not stored as a field
+value, but rather calculated on-the-fly using data maintained
+elsewhere in the database.
+
+.. sourcecode:: pycon
 
     >>> q1.size
     0
@@ -47,7 +56,10 @@ Initially, each queue is empty:
     0
 
 Push items `i1`, `i2`, and `i3` onto queue `q1` as separate
-transactions:
+transactions.  See the `push` transaction method (lines 37-41) and the
+`E.Queue._Push` transaction class (lines 67-92) for how these work.
+
+.. sourcecode:: pycon
 
     >>> print t.db.execute(q1.t.push(item=i1))
     A :: 1
@@ -57,7 +69,11 @@ transactions:
     A :: 3
 
 Push items `i2`, `i3`, and `i4` onto queue `q2` as an atomic
-transaction:
+transaction.  This makes use of the `Combination` transaction built
+into Schevo, which allows multiple unrelated transactions to be
+executed atomically:
+
+.. sourcecode:: pycon
 
     >>> from schevo.transaction import Combination
     >>> transactions = [
@@ -74,13 +90,22 @@ transaction:
 
 Each queue now has three members:
 
+.. sourcecode:: pycon
+
     >>> q1.size
     3
     >>> q2.size
     3
 
 Non-destructively inspect the queue in bidirectional order from either
-end:
+end by starting at the `head` or `tail` field value of a queue,
+traversing with the `next` and `previous` fields, and finally by
+retrieving the queue member's `item` and that item's `number`.
+
+`previous` is a calculated field that makes use of Schevo's automatic
+bidirectional entity linking (lines 105-111).
+
+.. sourcecode:: pycon
 
     >>> q1.head.item.number
     1
@@ -98,7 +123,11 @@ end:
     >>> q1.tail.previous.item.number
     2
 
-Destructively pop the first item available at the head of each queue:
+Destructively pop the first item available at the head of each
+queue. See the `pop` transaction method (lines 32-35) and the
+`E.Queue._Pop` transaction class (lines 43-65) for how these work.
+
+.. sourcecode:: pycon
 
     >>> item = t.db.execute(q1.t.pop())
     >>> item == i1
@@ -116,6 +145,15 @@ Destructively pop the first item available at the head of each queue:
     >>> q2.head.item.number
     3
 
+As mentioned at the beginning of this section, "an item can only
+appear once in a given queue."  Attempt to add an item to a queue that
+is already in the queue and receive a `KeyError`:
+
 .. sourcecode:: pycon
+
+    >>> t.db.execute(q2.t.push(item=i3))    #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+      ...
+    KeyCollision: ("Duplicate value ... for key ('queue', 'item') ...)
 
     >>> t.done()

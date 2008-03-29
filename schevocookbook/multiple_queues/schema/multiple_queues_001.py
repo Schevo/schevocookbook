@@ -104,9 +104,9 @@ class QueueMember(E.Entity):
     next = f.entity('QueueMember', required=False)
     @f.entity('QueueMember', required=False)
     def previous(self):
-        next = self.m.queue_members()
-        if next:
-            return next[0]
+        previous_members = self.m.queue_members()
+        if previous_members:
+            return previous_members[0]
         else:
             return UNASSIGNED
     
