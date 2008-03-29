@@ -147,7 +147,9 @@ queue. See the `pop` transaction method (lines 32-35) and the
 
 As mentioned at the beginning of this section, "an item can only
 appear once in a given queue."  Attempt to add an item to a queue that
-is already in the queue and receive a `KeyError`:
+is already in the queue and Schevo raises a `KeyCollision` exception.
+This is due to the key specified for the `QueueMember` extent (line
+113):
 
 .. sourcecode:: pycon
 
